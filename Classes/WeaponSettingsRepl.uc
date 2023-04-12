@@ -310,7 +310,7 @@ simulated final function float MinigunDownAnimSpeed() {
 
 simulated final function float MinigunUnwindAnimSpeed() {
 	if (MinigunUnwindTime > 0.0)
-		return FMin(100.0, default.MinigunUnwindTime / MinigunUnwindTime);
+		return FMin(100.0, 1.5 * default.MinigunUnwindTime / MinigunUnwindTime);
 	return 100.0;
 }
 
