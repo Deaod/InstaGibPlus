@@ -365,7 +365,7 @@ simulated function PlayUnwind()
 	if ( Owner != None )
 	{
 		PlayOwnedSound(Misc1Sound, SLOT_Misc, 3.0*Pawn(Owner).SoundDampening);
-		PlayAnim('UnWind', GetWeaponSettings().MinigunUnwindSpeed(), TweenTime);
+		PlayAnim('UnWind', GetWeaponSettings().MinigunUnwindAnimSpeed(), TweenTime);
 	}
 }
 
