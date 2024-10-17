@@ -75,6 +75,7 @@ var float ShockProjectileDamage;
 var float ShockProjectileHurtRadius;
 var float ShockProjectileMomentum;
 var bool  ShockProjectileBlockBullets;
+var bool  ShockProjectileBlockFlak;
 var bool  ShockProjectileTakeDamage;
 var bool  ShockProjectileCompensatePing;
 var float ShockProjectileHealth;
@@ -201,6 +202,7 @@ replication {
 		ShockProjectileHurtRadius,
 		ShockProjectileMomentum,
 		ShockProjectileBlockBullets,
+		ShockProjectileBlockFlak,
 		ShockProjectileTakeDamage,
 		ShockProjectileCompensatePing,
 		ShockProjectileHealth,
@@ -526,6 +528,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	ShockProjectileHurtRadius = S.ShockProjectileHurtRadius;
 	ShockProjectileMomentum = S.ShockProjectileMomentum;
 	ShockProjectileBlockBullets = S.ShockProjectileBlockBullets;
+	ShockProjectileBlockFlak = S.ShockProjectileBlockFlak;
 	ShockProjectileTakeDamage = S.ShockProjectileTakeDamage;
 	ShockProjectileCompensatePing = S.ShockProjectileCompensatePing;
 	ShockProjectileHealth = S.ShockProjectileHealth;
@@ -691,6 +694,7 @@ defaultproperties
 	ShockProjectileHurtRadius=70
 	ShockProjectileMomentum=1.0
 	ShockProjectileBlockBullets=True
+	ShockProjectileBlockFlak=True
 	ShockProjectileTakeDamage=False
 	ShockProjectileCompensatePing=False
 	ShockProjectileHealth=30

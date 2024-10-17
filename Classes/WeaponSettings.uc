@@ -102,6 +102,7 @@ var config float ShockProjectileDamage;
 var config float ShockProjectileHurtRadius;
 var config float ShockProjectileMomentum;
 var config bool  ShockProjectileBlockBullets;
+var config bool  ShockProjectileBlockFlak;
 var config bool  ShockProjectileTakeDamage;
 var config bool  ShockProjectileCompensatePing;
 var config float ShockProjectileHealth;
@@ -257,6 +258,7 @@ defaultproperties
 	ShockProjectileHurtRadius=70
 	ShockProjectileMomentum=1.0
 	ShockProjectileBlockBullets=True
+	ShockProjectileBlockFlak=True
 	ShockProjectileTakeDamage=False
 	ShockProjectileCompensatePing=False
 	ShockProjectileHealth=30
