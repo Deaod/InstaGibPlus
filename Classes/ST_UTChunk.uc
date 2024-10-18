@@ -20,7 +20,7 @@ function ProcessTouch (Actor Other, vector HitLocation)
 		return;
 	
 	// For ShockProjectileBlockFlakChunk
-    if (ShockProj(Other) != None && Chunkie.STM.WeaponSettings.ShockProjectileBlockFlakChunk)
+    if (ShockProj(Other) != None && !Chunkie.STM.WeaponSettings.ShockProjectileBlockFlakChunk)
         return;
 
 	if ( (Chunk(Other) == None) && ((Physics == PHYS_Falling) || (Other != Instigator)) )
