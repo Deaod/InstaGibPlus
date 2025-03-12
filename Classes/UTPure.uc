@@ -34,6 +34,8 @@ var Info VersionInfo;
 var Object SettingsHelper;
 var ServerSettings Settings;
 
+var UTPlusDummy CompDummies;
+
 var IGPlus_WeaponImplementation WImp;
 var bool bWImpSearched;
 
@@ -486,6 +488,31 @@ event Tick(float zzDelta)
 	}
 }
 
+function CompensateFor(int Ping, optional bbPlayer Instigator) {
+	local UTPlusDummy D;
+
+	for (D = CompDummies; D != none; D = D.Next) {
+		if (D.Actual != none &&
+			D.Actual.Health > 0 &&
+			D.Actual.PlayerReplicationInfo != none &&
+			D.Actual.PlayerReplicationInfo.bIsSpectator == false &&
+			D.Actual.bHidden == false &&
+			D.Actual.bCollideActors == true &&
+			D.Actual != Instigator
+		) {
+			D.CompStart(Ping);
+		}
+	}
+}
+
+function EndCompensation() {
+	local UTPlusDummy D;
+
+	for (D = CompDummies; D != none; D = D.Next) {
+		D.CompEnd();
+	}
+}
+
 function xxHideFlags()
 {	// Makes flags untouchable
 	local CTFFlag Flag;
@@ -664,13 +691,22 @@ function AssignFixedSkinIndex(Pawn Other) {
 		}
 	}
 }
+function UTPlusDummy FindDummy(Pawn P) {
+	local UTPlusDummy D;
+
+	for (D = CompDummies; D != none; D = D.Next)
+		if (D.Actual == P)
+			return D;
+
+	return none;
+}
 
 // Modify the login classes to our classes.
 function ModifyLogin(out class<playerpawn> SpawnClass, out string Portal, out string Options)
 {
 	local class<playerpawn> origSC;
 	local class<Spectator>  specCls;
-
+	
 	// Someone claims that Engine.Pawn makes it here.
 
 	if (SpawnClass == None)
@@ -716,6 +752,15 @@ function ModifyLogin(out class<playerpawn> SpawnClass, out string Portal, out st
 function ModifyPlayer(Pawn Other)
 {
 	local bbPlayer zzP;
+	local UTPlusDummy D;
+
+	D = FindDummy(Other);
+	if (D == none) {
+		D = Spawn(class'UTPlusDummy');
+		D.Actual = Other;
+		D.Next = CompDummies;
+		CompDummies = D;
+	}
 
 	if (Other.IsA('TournamentPlayer') && Settings.bUTPureEnabled)
 	{

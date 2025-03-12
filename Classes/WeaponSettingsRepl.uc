@@ -14,6 +14,7 @@ var float SniperMomentum;
 var float SniperHeadshotMomentum;
 var float SniperReloadTime;
 var bool  SniperUseReducedHitbox;
+var bool  SniperUseClientSideAnimations;
 
 var float EightballSelectTime;
 var float EightballDownTime;
@@ -24,6 +25,7 @@ var float RocketSpreadSpacingDegrees;
 var float GrenadeDamage;
 var float GrenadeHurtRadius;
 var float GrenadeMomentum;
+var bool  RocketCompensatePing;
 
 var float FlakSelectTime;
 var float FlakPostSelectTime;
@@ -38,6 +40,7 @@ var bool  FlakChunkRandomSpread;
 var float FlakSlugDamage;
 var float FlakSlugHurtRadius;
 var float FlakSlugMomentum;
+var bool  FlakCompensatePing;
 
 var float RipperSelectTime;
 var float RipperDownTime;
@@ -48,6 +51,7 @@ var float RipperPrimaryMomentum;
 var float RipperSecondaryHurtRadius;
 var float RipperSecondaryDamage;
 var float RipperSecondaryMomentum;
+var bool  RipperCompensatePing;
 
 var float MinigunSelectTime;
 var float MinigunDownTime;
@@ -69,12 +73,15 @@ var float PulseBoltMomentum;
 var float PulseBoltMaxAccumulate;
 var float PulseBoltGrowthDelay;
 var int   PulseBoltMaxSegments;
+var bool  PulseCompensatePing;
 
 var float ShockSelectTime;
 var float ShockDownTime;
 var float ShockBeamDamage;
 var float ShockBeamMomentum;
 var bool  ShockBeamUseReducedHitbox;
+var bool  ShockBeamUseClientSideAnimations;
+
 var float ShockProjectileDamage;
 var float ShockProjectileHurtRadius;
 var float ShockProjectileMomentum;
@@ -97,6 +104,7 @@ var float BioAltDamage;
 var float BioAltMomentum;
 var float BioHurtRadiusBase;
 var float BioHurtRadiusMax;
+var bool  BioCompensatePing;
 
 var float EnforcerSelectTime;
 var float EnforcerDownTime;
@@ -106,6 +114,7 @@ var float EnforcerReloadTime;
 var float EnforcerReloadTimeAlt;
 var float EnforcerReloadTimeRepeat;
 var bool  EnforcerUseReducedHitbox;
+var bool  EnforcerUseClientSideAnimations;
 
 var bool  EnforcerAllowDouble;
 var float EnforcerDamageDouble;
@@ -130,8 +139,11 @@ var float TranslocatorSelectTime;
 var float TranslocatorOutSelectTime;
 var float TranslocatorDownTime;
 var float TranslocatorHealth;
+var bool  TranslocatorCompensatePing;
 
 var int   InvisibilityDuration;
+
+var bool  bEnablePingCompensation;
 
 replication {
 	reliable if (Role == ROLE_Authority)
@@ -149,6 +161,7 @@ replication {
 		SniperHeadshotMomentum,
 		SniperReloadTime,
 		SniperUseReducedHitbox,
+		SniperUseClientSideAnimations,
 
 		EightballSelectTime,
 		EightballDownTime,
@@ -158,6 +171,7 @@ replication {
 		GrenadeDamage,
 		GrenadeHurtRadius,
 		GrenadeMomentum,
+		RocketCompensatePing,
 
 		FlakSelectTime,
 		FlakPostSelectTime,
@@ -172,6 +186,7 @@ replication {
 		FlakSlugDamage,
 		FlakSlugHurtRadius,
 		FlakSlugMomentum,
+		FlakCompensatePing,
 
 		RipperSelectTime,
 		RipperDownTime,
@@ -182,6 +197,7 @@ replication {
 		RipperSecondaryHurtRadius,
 		RipperSecondaryDamage,
 		RipperSecondaryMomentum,
+		RipperCompensatePing,
 
 		MinigunSelectTime,
 		MinigunDownTime,
@@ -203,12 +219,14 @@ replication {
 		PulseBoltMaxAccumulate,
 		PulseBoltGrowthDelay,
 		PulseBoltMaxSegments,
+		PulseCompensatePing,
 
 		ShockSelectTime,
 		ShockDownTime,
 		ShockBeamDamage,
 		ShockBeamMomentum,
 		ShockBeamUseReducedHitbox,
+		ShockBeamUseClientSideAnimations,
 		ShockProjectileDamage,
 		ShockProjectileHurtRadius,
 		ShockProjectileMomentum,
@@ -231,6 +249,7 @@ replication {
 		BioAltMomentum,
 		BioHurtRadiusBase,
 		BioHurtRadiusMax,
+		BioCompensatePing,
 
 		EnforcerSelectTime,
 		EnforcerDownTime,
@@ -240,6 +259,7 @@ replication {
 		EnforcerReloadTimeAlt,
 		EnforcerReloadTimeRepeat,
 		EnforcerUseReducedHitbox,
+		EnforcerUseClientSideAnimations,
 
 		EnforcerAllowDouble,
 		EnforcerDamageDouble,
@@ -264,8 +284,10 @@ replication {
 		TranslocatorOutSelectTime,
 		TranslocatorDownTime,
 		TranslocatorHealth,
+		TranslocatorCompensatePing,
+		InvisibilityDuration,
 
-		InvisibilityDuration;
+		bEnablePingCompensation;
 }
 
 simulated final function float WarheadSelectAnimSpeed() {
@@ -481,6 +503,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	SniperHeadshotMomentum = S.SniperHeadshotMomentum;
 	SniperReloadTime = S.SniperReloadTime;
 	SniperUseReducedHitbox = S.SniperUseReducedHitbox;
+	SniperUseClientSideAnimations = S.SniperUseClientSideAnimations;
 
 	EightballSelectTime = S.EightballSelectTime;
 	EightballDownTime = S.EightballDownTime;
@@ -491,6 +514,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	GrenadeDamage = S.GrenadeDamage;
 	GrenadeHurtRadius = S.GrenadeHurtRadius;
 	GrenadeMomentum = S.GrenadeMomentum;
+	RocketCompensatePing = S.RocketCompensatePing;
 
 	FlakSelectTime = S.FlakSelectTime;
 	FlakPostSelectTime = S.FlakPostSelectTime;
@@ -505,6 +529,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	FlakSlugDamage = S.FlakSlugDamage;
 	FlakSlugHurtRadius = S.FlakSlugHurtRadius;
 	FlakSlugMomentum = S.FlakSlugMomentum;
+	FlakCompensatePing = S.FlakCompensatePing;
 
 	RipperSelectTime = S.RipperSelectTime;
 	RipperDownTime = S.RipperDownTime;
@@ -515,6 +540,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	RipperSecondaryHurtRadius = S.RipperSecondaryHurtRadius;
 	RipperSecondaryDamage = S.RipperSecondaryDamage;
 	RipperSecondaryMomentum = S.RipperSecondaryMomentum;
+	RipperCompensatePing = S.RipperCompensatePing;
 
 	MinigunSelectTime = S.MinigunSelectTime;
 	MinigunDownTime = S.MinigunDownTime;
@@ -536,12 +562,14 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	PulseBoltMaxAccumulate = S.PulseBoltMaxAccumulate;
 	PulseBoltGrowthDelay = S.PulseBoltGrowthDelay;
 	PulseBoltMaxSegments = S.PulseBoltMaxSegments;
+	PulseCompensatePing = S.PulseCompensatePing;
 
 	ShockSelectTime = S.ShockSelectTime;
 	ShockDownTime = S.ShockDownTime;
 	ShockBeamDamage = S.ShockBeamDamage;
 	ShockBeamMomentum = S.ShockBeamMomentum;
 	ShockBeamUseReducedHitbox = S.ShockBeamUseReducedHitbox;
+	ShockBeamUseClientSideAnimations = S.ShockBeamUseClientSideAnimations;
 	ShockProjectileDamage = S.ShockProjectileDamage;
 	ShockProjectileHurtRadius = S.ShockProjectileHurtRadius;
 	ShockProjectileMomentum = S.ShockProjectileMomentum;
@@ -565,6 +593,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	BioAltMomentum = S.BioAltMomentum;
 	BioHurtRadiusBase = S.BioHurtRadiusBase;
 	BioHurtRadiusMax = S.BioHurtRadiusMax;
+	BioCompensatePing = S.BioCompensatePing;
 
 	EnforcerSelectTime = S.EnforcerSelectTime;
 	EnforcerDownTime = S.EnforcerDownTime;
@@ -574,6 +603,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	EnforcerReloadTimeAlt = S.EnforcerReloadTimeAlt;
 	EnforcerReloadTimeRepeat = S.EnforcerReloadTimeRepeat;
 	EnforcerUseReducedHitbox = S.EnforcerUseReducedHitbox;
+	EnforcerUseClientSideAnimations = S.EnforcerUseClientSideAnimations;
 
 	EnforcerAllowDouble = S.EnforcerAllowDouble;
 	EnforcerDamageDouble = S.EnforcerDamageDouble;
@@ -582,7 +612,7 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	EnforcerReloadTimeDouble = S.EnforcerReloadTimeDouble;
 	EnforcerReloadTimeAltDouble = S.EnforcerReloadTimeAltDouble;
 	EnforcerReloadTimeRepeatDouble = S.EnforcerReloadTimeRepeatDouble;
-
+	
 	HammerSelectTime = S.HammerSelectTime;
 	HammerDownTime = S.HammerDownTime;
 	HammerDamage = S.HammerDamage;
@@ -598,8 +628,10 @@ function InitFromWeaponSettings(WeaponSettings S) {
 	TranslocatorOutSelectTime = S.TranslocatorOutSelectTime;
 	TranslocatorDownTime = S.TranslocatorDownTime;
 	TranslocatorHealth = S.TranslocatorHealth;
-
+	TranslocatorCompensatePing = S.TranslocatorCompensatePing;
 	InvisibilityDuration = S.InvisibilityDuration;
+
+	bEnablePingCompensation = S.bEnablePingCompensation;
 }
 
 defaultproperties
@@ -623,6 +655,7 @@ defaultproperties
 	SniperHeadshotMomentum=1.0
 	SniperReloadTime=0.6666666666
 	SniperUseReducedHitbox=False
+	SniperUseClientSideAnimations=False
 
 	EightballSelectTime=0.606061
 	EightballDownTime=0.366667
@@ -633,6 +666,7 @@ defaultproperties
 	GrenadeDamage=80
 	GrenadeHurtRadius=200
 	GrenadeMomentum=1.0
+	RocketCompensatePing=False
 
 	FlakSelectTime=0.625
 	FlakPostSelectTime=0.384615
@@ -647,6 +681,7 @@ defaultproperties
 	FlakSlugDamage=70
 	FlakSlugHurtRadius=150
 	FlakSlugMomentum=1.0
+	FlakCompensatePing=False
 
 	RipperSelectTime=0.75
 	RipperDownTime=0.2
@@ -657,6 +692,7 @@ defaultproperties
 	RipperSecondaryHurtRadius=180
 	RipperSecondaryDamage=34
 	RipperSecondaryMomentum=1.0
+	RipperCompensatePing=False
 
 	MinigunSelectTime=0.555556
 	MinigunDownTime=0.333333
@@ -678,12 +714,14 @@ defaultproperties
 	PulseBoltMaxAccumulate=0.08
 	PulseBoltGrowthDelay=0.05
 	PulseBoltMaxSegments=10
+	PulseCompensatePing=False
 
 	ShockSelectTime=0.5
 	ShockDownTime=0.259259
 	ShockBeamDamage=40
 	ShockBeamMomentum=1.0
 	ShockBeamUseReducedHitbox=False
+	ShockBeamUseClientSideAnimations=False
 	ShockProjectileDamage=55
 	ShockProjectileHurtRadius=70
 	ShockProjectileMomentum=1.0
@@ -706,6 +744,7 @@ defaultproperties
 	BioAltMomentum=1.0
 	BioHurtRadiusBase=75
 	BioHurtRadiusMax=250
+	BioCompensatePing=False
 
 	EnforcerSelectTime=0.777778
 	EnforcerDownTime=0.266667
@@ -715,6 +754,7 @@ defaultproperties
 	EnforcerReloadTimeAlt=0.26
 	EnforcerReloadTimeRepeat=0.266667
 	EnforcerUseReducedHitbox=False
+	EnforcerUseClientSideAnimations=False
 
 	EnforcerAllowDouble=True
 	EnforcerDamageDouble=17
@@ -739,6 +779,9 @@ defaultproperties
 	TranslocatorOutSelectTime=0.27
 	TranslocatorDownTime=0.212121
 	TranslocatorHealth=65.0
+	TranslocatorCompensatePing=False
 
 	InvisibilityDuration=45
+
+	bEnablePingCompensation=False
 }

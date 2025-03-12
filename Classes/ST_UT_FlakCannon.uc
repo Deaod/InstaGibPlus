@@ -45,8 +45,10 @@ function Fire( float Value )
 	local Bot B;
 	local ST_UTChunkInfo CI;
 	local Pawn PawnOwner;
+	local bbPlayer bbP;
 
 	PawnOwner = Pawn(Owner);
+	bbP = bbPlayer(PawnOwner);
 
 	if ( AmmoType == None )
 	{
@@ -100,6 +102,7 @@ function Fire( float Value )
 			CI.AddChunk(Spawn(ChunkClasses[Rand(arraycount(ChunkClasses))], CI,, Start + Y*Cos(4.0*Pi/3.0) + Z*Sin(4.0*Pi/3.0), rotator(R + Y*Cos(4.0*Pi/3.0) + Z*Sin(4.0*Pi/3.0))));
 			CI.AddChunk(Spawn(ChunkClasses[Rand(arraycount(ChunkClasses))], CI,, Start + Y*Cos(5.0*Pi/3.0) + Z*Sin(5.0*Pi/3.0), rotator(R + Y*Cos(5.0*Pi/3.0) + Z*Sin(5.0*Pi/3.0))));
 		}
+		
 		ClientFire(Value);
 		GoToState('NormalFire');
 	}
@@ -110,8 +113,10 @@ function AltFire( float Value )
 	local Vector Start, X,Y,Z;
 	local ST_FlakSlug Slug;
 	local Pawn PawnOwner;
+	local bbPlayer bbP;
 
 	PawnOwner = Pawn(Owner);
+	bbP = bbPlayer(PawnOwner);
 
 	if ( AmmoType == None )
 	{
@@ -131,6 +136,12 @@ function AltFire( float Value )
 		AdjustedAim = PawnOwner.AdjustToss(AltProjectileSpeed, Start, AimError, True, bAltWarnTarget);	
 		Slug = Spawn(class'ST_FlakSlug',,, Start,AdjustedAim);
 		Slug.WImp = WImp;
+		
+		// Apply ping compensation for flak slug if enabled
+		if (bbP != none && GetWeaponSettings().FlakCompensatePing) {
+			WImp.SimulateProjectile(Slug, bbP.PingAverage);
+		}
+		
 		ClientAltFire(Value);	
 		GoToState('AltFiring');
 	}	

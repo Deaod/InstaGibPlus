@@ -35,6 +35,26 @@ function PostBeginPlay()
 		break;		// Find master :D
 }
 
+function Projectile ProjectileFire(class<projectile> ProjClass, float ProjSpeed, bool bWarn)
+{
+    local Projectile P;
+    local bbPlayer bbP;
+    
+    // Call original ProjectileFire to spawn the projectile
+    P = Super.ProjectileFire(ProjClass, ProjSpeed, bWarn);
+    
+    // Check if we should apply ping compensation
+    if (P != None && GetWeaponSettings().RipperCompensatePing) {
+        bbP = bbPlayer(Owner);
+        if (bbP != None) {
+            // Simulate projectile forward by player's ping time
+            WImp.SimulateProjectile(P, bbP.PingAverage);
+        }
+    }
+    
+    return P;
+}
+
 function SetSwitchPriority(pawn Other)
 {	// Make sure "old" priorities are kept.
 	local int i;

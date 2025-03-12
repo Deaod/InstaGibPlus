@@ -54,6 +54,9 @@ function Translocate()
 function ThrowTarget()
 {
 	local Vector Start, X,Y,Z;
+	local bbPlayer bbP;
+
+	bbP = bbPlayer(Owner);
 
 	if (Level.Game.LocalLog != None)
 		Level.Game.LocalLog.LogSpecialEvent("throw_translocator", Pawn(Owner).PlayerReplicationInfo.PlayerID);
@@ -74,6 +77,10 @@ function ThrowTarget()
 		if ( Owner.IsA('Bot') )
 			TTarget.SetCollisionSize(0,0);
 		TTarget.Throw(Pawn(Owner), MaxTossForce, Start);
+		// Apply ping compensation for translocator target if enabled
+		if (bbP != none && GetWeaponSettings().TranslocatorCompensatePing) {
+			WImp.SimulateProjectile(TTarget, bbP.PingAverage);
+		}
 	}
 	else GotoState('Idle');
 }

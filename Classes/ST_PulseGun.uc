@@ -83,24 +83,54 @@ simulated function PlayFiring()
 
 state NormalFire
 {
-	ignores AnimEnd;
+    ignores AnimEnd;
 
-	function BeginState() {
-		super.BeginState();
+    function Projectile ProjectileFire(class<projectile> ProjClass, float ProjSpeed, bool bWarn)
+    {
+        local Projectile P;
+        local bbPlayer bbP;
+        
+        // Call the parent ProjectileFire to spawn the projectile
+        P = Super.ProjectileFire(ProjClass, ProjSpeed, bWarn);
+        
+        // Check if we should apply ping compensation
+        if (P != None && GetWeaponSettings().PulseCompensatePing) {
+            bbP = bbPlayer(Owner);
+            if (bbP != None) {
+                // Simulate projectile forward by player's ping time
+                WImp.SimulateProjectile(P, bbP.PingAverage);
+            }
+        }
+        
+        return P;
+    }
 
-		RateOfFire = WImp.WeaponSettings.PulseSphereFireRate;
-	}
+    // Include the rest of the original NormalFire state
+    function Tick(float DeltaTime)
+    {
+        if (Owner == None) 
+            GotoState('Pickup');
+    }
 
-	function Tick(float DeltaTime) {
-		super.Tick(DeltaTime);
+    function BeginState()
+    {
+        Super.BeginState();
+        Angle = 0;
+        AmbientGlow = 200;
+    }
 
-		RateOfFire -= DeltaTime;
-		if (RateOfFire < 0) {
-			Finish(); // potentially fire again
-			RateOfFire += WImp.WeaponSettings.PulseSphereFireRate;
-		}
-	}
+    function EndState()
+    {
+        PlaySpinDown();
+        AmbientSound = None;
+        AmbientGlow = 0;
+        OldFlashCount = FlashCount;
+        Super.EndState();
+    }
+
 Begin:
+    Sleep(0.18);
+    Finish();
 }
 
 simulated state ClientFiring

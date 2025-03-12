@@ -38,6 +38,7 @@ var config float SniperMomentum;
 var config float SniperHeadshotMomentum;
 var config float SniperReloadTime;
 var config bool  SniperUseReducedHitbox;
+var config bool  SniperUseClientSideAnimations;
 
 var config float EightballSelectTime;
 var config float EightballDownTime;
@@ -48,6 +49,7 @@ var config float RocketSpreadSpacingDegrees;
 var config float GrenadeDamage;
 var config float GrenadeHurtRadius;
 var config float GrenadeMomentum;
+var config bool  RocketCompensatePing;
 
 var config float FlakSelectTime;
 var config float FlakPostSelectTime;
@@ -62,6 +64,7 @@ var config bool  FlakChunkRandomSpread;
 var config float FlakSlugDamage;
 var config float FlakSlugHurtRadius;
 var config float FlakSlugMomentum;
+var config bool  FlakCompensatePing;
 
 var config float RipperSelectTime;
 var config float RipperDownTime;
@@ -72,6 +75,7 @@ var config float RipperPrimaryMomentum;
 var config float RipperSecondaryHurtRadius;
 var config float RipperSecondaryDamage;
 var config float RipperSecondaryMomentum;
+var config bool  RipperCompensatePing;
 
 var config float MinigunSelectTime;
 var config float MinigunDownTime;
@@ -93,12 +97,14 @@ var config float PulseBoltMomentum;
 var config float PulseBoltMaxAccumulate;
 var config float PulseBoltGrowthDelay;
 var config int   PulseBoltMaxSegments;
+var config bool  PulseCompensatePing;
 
 var config float ShockSelectTime;
 var config float ShockDownTime;
 var config float ShockBeamDamage;
 var config float ShockBeamMomentum;
 var config bool  ShockBeamUseReducedHitbox;
+var config bool  ShockBeamUseClientSideAnimations;
 var config float ShockProjectileDamage;
 var config float ShockProjectileHurtRadius;
 var config float ShockProjectileMomentum;
@@ -121,6 +127,7 @@ var config float BioAltDamage;
 var config float BioAltMomentum;
 var config float BioHurtRadiusBase;
 var config float BioHurtRadiusMax;
+var config bool  BioCompensatePing;
 
 var config float EnforcerSelectTime;
 var config float EnforcerDownTime;
@@ -130,6 +137,7 @@ var config float EnforcerReloadTime;
 var config float EnforcerReloadTimeAlt;
 var config float EnforcerReloadTimeRepeat;
 var config bool  EnforcerUseReducedHitbox;
+var config bool  EnforcerUseClientSideAnimations;
 
 var config bool  EnforcerAllowDouble;
 var config float EnforcerDamageDouble;
@@ -154,10 +162,13 @@ var config float TranslocatorSelectTime;
 var config float TranslocatorOutSelectTime;
 var config float TranslocatorDownTime;
 var config float TranslocatorHealth;
+var config bool  TranslocatorCompensatePing;
 
 var config string DefaultWeaponClass;
 
 var config int   InvisibilityDuration;
+
+var config bool  bEnablePingCompensation;
 
 defaultproperties
 {
@@ -198,6 +209,7 @@ defaultproperties
 	SniperHeadshotMomentum=1.0
 	SniperReloadTime=0.6666666666
 	SniperUseReducedHitbox=False
+	SniperUseClientSideAnimations=False
 
 	EightballSelectTime=0.606061
 	EightballDownTime=0.366667
@@ -208,6 +220,7 @@ defaultproperties
 	GrenadeDamage=80
 	GrenadeHurtRadius=200
 	GrenadeMomentum=1.0
+	RocketCompensatePing=False
 
 	FlakSelectTime=0.625
 	FlakPostSelectTime=0.384615
@@ -222,6 +235,7 @@ defaultproperties
 	FlakSlugDamage=70
 	FlakSlugHurtRadius=150
 	FlakSlugMomentum=1.0
+	FlakCompensatePing=False
 
 	RipperSelectTime=0.75
 	RipperDownTime=0.2
@@ -232,6 +246,7 @@ defaultproperties
 	RipperSecondaryHurtRadius=180
 	RipperSecondaryDamage=34
 	RipperSecondaryMomentum=1.0
+	RipperCompensatePing=False
 
 	MinigunSelectTime=0.555556
 	MinigunDownTime=0.333333
@@ -253,12 +268,14 @@ defaultproperties
 	PulseBoltMaxAccumulate=0.08
 	PulseBoltGrowthDelay=0.05
 	PulseBoltMaxSegments=10
+	PulseCompensatePing=False
 
 	ShockSelectTime=0.5
 	ShockDownTime=0.259259
 	ShockBeamDamage=40
 	ShockBeamMomentum=1.0
 	ShockBeamUseReducedHitbox=False
+	ShockBeamUseClientSideAnimations=False
 	ShockProjectileDamage=55
 	ShockProjectileHurtRadius=70
 	ShockProjectileMomentum=1.0
@@ -281,6 +298,7 @@ defaultproperties
 	BioAltMomentum=1.0
 	BioHurtRadiusBase=75
 	BioHurtRadiusMax=250
+	BioCompensatePing=False
 
 	EnforcerSelectTime=0.777778
 	EnforcerDownTime=0.266667
@@ -290,6 +308,7 @@ defaultproperties
 	EnforcerReloadTimeAlt=0.26
 	EnforcerReloadTimeRepeat=0.266667
 	EnforcerUseReducedHitbox=False
+	EnforcerUseClientSideAnimations=False
 
 	EnforcerAllowDouble=True
 	EnforcerDamageDouble=17
@@ -314,8 +333,10 @@ defaultproperties
 	TranslocatorOutSelectTime=0.27
 	TranslocatorDownTime=0.212121
 	TranslocatorHealth=65.0
-
+	TranslocatorCompensatePing=False
 	DefaultWeaponClass=""
 
 	InvisibilityDuration=45
+
+	bEnablePingCompensation=False
 }

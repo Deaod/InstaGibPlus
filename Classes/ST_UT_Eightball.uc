@@ -7,7 +7,6 @@
 class ST_UT_Eightball extends UT_Eightball;
 
 var IGPlus_WeaponImplementation WImp;
-
 var WeaponSettingsRepl WSettings;
 
 simulated final function WeaponSettingsRepl FindWeaponSettings() {
@@ -33,6 +32,7 @@ function PostBeginPlay()
 
 	ForEach AllActors(Class'IGPlus_WeaponImplementation', WImp)
 		break;		// Find master :D
+		
 }
 
 ///////////////////////////////////////////////////////
@@ -69,6 +69,7 @@ state FireRockets
 		local int DupRockets;
 		local float Spread;
 		local int i;
+		local bbPlayer bbP;
 
 		if (bCanClientFire == false)
 			return;
@@ -76,6 +77,9 @@ state FireRockets
 		PawnOwner = Pawn(Owner);
 		if (PawnOwner == None)
 			return;
+		
+		bbP = bbPlayer(PawnOwner);
+
 		PawnOwner.PlayRecoil(FiringSpeed);
 		PlayerOwner = PlayerPawn(Owner);
 		Angle = 0;
@@ -121,6 +125,7 @@ state FireRockets
 		else
 			RocketRad = 4;
 
+		
 		for (i = 0; i < RocketsLoaded; i++)
 		{
 			Spread = (-0.5 * (RocketsLoaded-1) + i);
@@ -141,26 +146,57 @@ state FireRockets
 					FireRot.Yaw = AdjustedAim.Yaw + Spread*WSettings.RocketSpreadSpacingDegrees*(65536.0/360.0);
 				}
 
-				if ( LockedTarget != None )
+				// Apply ping compensation if enabled
+				if (bbP != none && WSettings.RocketCompensatePing)
 				{
-					s = Spawn( class 'ST_ut_SeekingRocket',, '', FireLocation,FireRot);
-					s.WImp = WImp;
-					s.Seeking = LockedTarget;
-					s.NumExtraRockets = DupRockets;
+					
+					// Spawn rockets at original location
+					if (LockedTarget != None)
+					{
+						s = Spawn(class'ST_ut_SeekingRocket',, '', FireLocation, FireRot);
+						s.WImp = WImp;
+						s.Seeking = LockedTarget;
+						s.NumExtraRockets = DupRockets;
+						
+						// Simulate physics for ping compensation using discrete ticks
+						WImp.SimulateProjectile(s, bbP.PingAverage);
+					}
+					else 
+					{
+						r = Spawn(class'ST_rocketmk2',, '', FireLocation, FireRot);
+						r.WImp = WImp;
+						r.NumExtraRockets = DupRockets;
+						
+						// Simulate physics for ping compensation using discrete ticks
+						 WImp.SimulateProjectile(r, bbP.PingAverage);
+					}
 				}
-				else 
+				else
 				{
-					r = Spawn( class'ST_rocketmk2',, '', FireLocation,FireRot);
-					r.WImp = WImp;
-					r.NumExtraRockets = DupRockets;
+					// No compensation - spawn rockets normally
+					if (LockedTarget != None)
+					{
+						s = Spawn(class'ST_ut_SeekingRocket',, '', FireLocation, FireRot);
+						s.WImp = WImp;
+						s.Seeking = LockedTarget;
+						s.NumExtraRockets = DupRockets;
+					}
+					else 
+					{
+						r = Spawn(class'ST_rocketmk2',, '', FireLocation, FireRot);
+						r.WImp = WImp;
+						r.NumExtraRockets = DupRockets;
+					}
 				}
 			}
-			else 
+			else // Grenades
 			{
-				g = Spawn( class 'ST_ut_Grenade',, '', FireLocation,AdjustedAim);
+				g = Spawn(class'ST_ut_Grenade',, '', FireLocation, AdjustedAim);
 				g.WImp = WImp;
 				g.NumExtraGrenades = DupRockets;
-				if ( DupRockets > 0 )
+				
+				// Apply randomization for multiple grenades
+				if (DupRockets > 0)
 				{
 					RandRot.Pitch = FRand() * 1500 - 750;
 					RandRot.Yaw = FRand() * 1500 - 750;

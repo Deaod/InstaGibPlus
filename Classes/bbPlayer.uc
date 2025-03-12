@@ -1331,6 +1331,7 @@ function Timer() {
 	if (bIsFinishedLoading == false) {
 		bIsFinishedLoading = true;
 		ClientMessage("[IG+] To view available commands type 'mutate playerhelp' in the console");
+		ClientMessage("[IG+] Server Using Ping Compensation: " $ GetWeaponSettings().bEnablePingCompensation);
 	}
 }
 
@@ -3484,6 +3485,7 @@ function bool xxWeaponIsNewNet( optional bool bAlt )
 		|| Weapon.IsA('NN_SuperShockRifle')
 		|| Weapon.IsA('NN_SniperRifle')
 		|| Weapon.IsA('NN_ASMD')
+		|| Weapon.IsA('ST_SniperRifle')
 	);
 }
 
@@ -3517,13 +3519,36 @@ function Actor TraceShot(out vector HitLocation, out vector HitNormal, vector En
 	local bool bSProjBlocks;
 	local bool bWeaponShock;
 	local WeaponSettingsRepl WS;
+	local UTPlusDummy D;
 
 	WS = GetWeaponSettings();
 	bSProjBlocks = true;
 	if (WS != none)
 		bSProjBlocks = GetWeaponSettings().ShockProjectileBlockBullets;
 	bWeaponShock = (Weapon != none && Weapon.IsA('ShockRifle'));
-	
+
+	if (WSettings.bEnablePingCompensation)
+	{
+		zzUTPure.CompensateFor(PingAverage);
+		
+		foreach TraceActors( class'Actor', A, HitLocation, HitNormal, EndTrace, StartTrace) {
+			if (A.IsA('UTPlusDummy')) {
+				D = UTPlusDummy(A);
+				if ((D.Actual != self) && D.AdjustHitLocation(HitLocation, EndTrace - StartTrace)) {
+					Other = D.Actual;
+					break;
+				}
+			} else if ((A == Level) || (Mover(A) != None) || A.bProjTarget || (A.bBlockPlayers && A.bBlockActors)) {
+				if (bSProjBlocks || A.IsA('ShockProj') == false || bWeaponShock)
+				Other = A;
+			}
+				if (Other != none)
+				break;
+			}
+		zzUTPure.EndCompensation();
+		return Other;
+	} else
+	{
 	foreach TraceActors(class'Actor', A, HitLocation, HitNormal, EndTrace, StartTrace) {
 		if (Pawn(A) != none) {
 			if ((A != self) && Pawn(A).AdjustHitLocation(HitLocation, EndTrace - StartTrace))
@@ -3537,6 +3562,7 @@ function Actor TraceShot(out vector HitLocation, out vector HitNormal, vector En
 			break;
 	}
 	return Other;
+	}
 }
 
 simulated function xxEnableCarcasses()
