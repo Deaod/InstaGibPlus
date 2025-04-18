@@ -1,4 +1,4 @@
-﻿class ST_HealthVialSDOM extends HealthVial;
+class ST_HealthVialSDOM extends HealthVial;
 
 defaultproperties
 {

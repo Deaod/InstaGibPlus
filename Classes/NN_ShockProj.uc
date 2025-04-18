@@ -50,6 +50,8 @@ function SuperDuperExplosion()	// aka, combo.
     local UT_SuperComboRing Ring;
 
 	bbP = bbPlayer(Owner);
+
+	// TODO: I think this means combos don't do damage?
 	/* if (bbP != None && bbP.bNewNet)
 	{
 		if (Level.NetMode == NM_Client && !IsA('NN_ShockProjOwnerHidden'))
@@ -77,6 +79,7 @@ simulated function NN_SuperExplosion(Pawn Pwner)	// aka, combo.
 	bbP = bbPlayer(Pwner);
 	Tater = Pwner.ViewRotation;
 
+	// TODO: I think this means combos don't do damage?
 	/* if (bbP != None && bbP.bNewNet)
 	{
 		if (Level.NetMode == NM_Client)

@@ -1,4 +1,4 @@
-﻿class ClientShockBeam extends Effects;
+class ClientShockBeam extends Effects;
 
 // Settings
 var int Team;
@@ -59,7 +59,7 @@ simulated function SetProperties(int pTeam, float pSize, float pCurve, float pDu
         case 0:
             Texture = Texture'BotPack.Translocator.Tranglow';
             LightHue = 0;
-            breaK;
+            break;
 
         case 1:
             Texture = Texture'BotPack.Translocator.Tranglowb';
@@ -137,20 +137,30 @@ static final function Cleanup() {
     default.Free = none;
 }
 
+
 defaultproperties
 {
-     Physics=PHYS_Rotating
-     RemoteRole=ROLE_None
-     LifeSpan=0.000000
-     Rotation=(Roll=20000)
-     DrawType=DT_Mesh
-     Style=STY_Translucent
-     Texture=Texture'Botpack.Effects.jenergy2'
-     Mesh=LodMesh'Botpack.Shockbm'
-     DrawScale=0.440000
-     bUnlit=True
-     bParticles=True
-     bFixedRotationDir=True
-     RotationRate=(Roll=1000000)
-     DesiredRotation=(Roll=20000)
+    Team=0
+    Size=0.0000000
+    Curve=0.0000000
+    duration=0.0000000
+    MoveAmount=(X=0.0000000,Y=0.0000000,Z=0.0000000)
+    NumPuffs=0
+    bBeamEnableLight=false
+    TimeLeft=0.0000000
+    Next=none
+    Free=none
+    Physics=5
+    RemoteRole=0
+    Rotation=(Pitch=0,Yaw=0,Roll=20000)
+    DrawType=2
+    Style=3
+    Texture=Texture'Botpack.Effects.jenergy2'
+    Mesh=LodMesh'Botpack.Shockbm'
+    DrawScale=0.4400000
+    bUnlit=true
+    bParticles=true
+    bFixedRotationDir=true
+    RotationRate=(Pitch=0,Yaw=0,Roll=1000000)
+    DesiredRotation=(Pitch=0,Yaw=0,Roll=20000)
 }

@@ -3574,6 +3574,7 @@ function bool xxWeaponIsNewNet( optional bool bAlt )
 		|| Weapon.IsA('NN_SniperRifle')
 		|| Weapon.IsA('NN_ASMD')
 		|| Weapon.IsA('ST_SniperRifle')
+		|| Weapon.IsA('NN_ShockDOMRifle')
 	);
 }
 
